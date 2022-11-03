@@ -16,7 +16,7 @@ class CustomerRepository {
 
   const CustomerRepository(this._client);
 
-  String get host => "127.0.0.1";
+  String get host => "172.16.220.50";
   String get port => "3001";
 
   Future<List<CustomerEntity>> getAllCustomers() async {
