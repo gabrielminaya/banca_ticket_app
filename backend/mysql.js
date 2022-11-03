@@ -26,7 +26,7 @@ function initializeConnection(config) {
 }
 
 export default initializeConnection({
-    host: '172.16.11.29',
+    host: '172.16.220.29',
     user: 'conex',
     password: 'Ad123456',
     database: 'otrsbancas'
