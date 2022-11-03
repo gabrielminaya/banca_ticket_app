@@ -15,7 +15,7 @@ const HOST = '0.0.0.0';
 app.get("/users", (_, res) => {
 
     try {
-        connection.query(`SELECT * FROM otrs.customer_user;`, function (error, results, fields) {
+        connection.query(`SELECT * FROM customer_user;`, function (error, results, fields) {
             if (error) throw error;
 
             return res.json({
@@ -39,7 +39,7 @@ app.post("/updateMails", (req, res) => {
     const { oldEmail, newEmail } = req.body;
 
     try {
-        const query = `UPDATE otrs.customer_user SET email = '${newEmail}' WHERE email = '${oldEmail}';`;
+        const query = `UPDATE customer_user SET email = '${newEmail}' WHERE email = '${oldEmail}';`;
         console.log(query);
 
         connection.query(query, function (error, results, fields) {
@@ -64,7 +64,7 @@ app.post("/updateCommentary", (req, res) => {
 
     try {
         let newComments = `${contactOne}/${contactTwo}/${name}`;
-        let query = `UPDATE otrs.customer_user SET comments = '${newComments}' WHERE login = '${id}';`;
+        let query = `UPDATE customer_user SET comments = '${newComments}' WHERE login = '${id}';`;
         console.log(query);
 
         connection.query(query, function (error, results, fields) {
@@ -90,7 +90,7 @@ app.post("/updateLastname", (req, res) => {
     const { id, newLastname } = req.body;
 
     try {
-        const query = `UPDATE otrs.customer_user SET last_name = '${newLastname}' WHERE login = '${id}';`;
+        const query = `UPDATE customer_user SET last_name = '${newLastname}' WHERE login = '${id}';`;
         console.log(query)
         connection.query(query, function (error, results, fields) {
             if (error) throw error;
