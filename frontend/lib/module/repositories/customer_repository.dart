@@ -55,8 +55,14 @@ class CustomerRepository {
         body: jsonEncode({
           "id": id,
           "name": name,
-          "contactOne": contactOne,
-          "contactTwo": contactTwo,
+          "contactOne": contactOne.replaceAllMapped(
+            RegExp(r'(\d{3})(\d{3})(\d+)'),
+            (Match m) => "(${m[1]}) ${m[2]}-${m[3]}",
+          ),
+          "contactTwo": contactTwo.replaceAllMapped(
+            RegExp(r'(\d{3})(\d{3})(\d+)'),
+            (Match m) => "(${m[1]}) ${m[2]}-${m[3]}",
+          ),
         }),
       );
 

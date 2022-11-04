@@ -49,6 +49,8 @@ class HomeView extends ConsumerWidget {
 
     void updateCSV() async {
       final screenSize = MediaQuery.of(context).size;
+      var shortestSide = screenSize.shortestSide;
+      final bool useMobileLayout = shortestSide < 600;
 
       void importCSV() async {
         //Pick file
@@ -65,60 +67,63 @@ class HomeView extends ConsumerWidget {
       }
 
       context.showModal(SizedBox(
-        width: screenSize.width / 2,
+        width: useMobileLayout ? null : screenSize.width / 2,
         child: FormBuilder(
           key: formKey,
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: ListView(
+          child: Padding(
             padding: const EdgeInsets.all(20),
-            children: [
-              const Divider(),
-              const Center(
-                child: Text("Actualizar por CSV", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              ),
-              const Divider(),
-              const SizedBox(height: 20),
-              Consumer(builder: (context, ref, widget) {
-                return ElevatedButton(onPressed: importCSV, child: Text(ref.watch(fileNameProvider)));
-              }),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: screenSize.width,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
-                  child: const Text("Actualizar"),
-                  onPressed: () async {
-                    final files = ref.watch(fileProvider);
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Divider(),
+                const Center(
+                  child: Text("Actualizar por CSV", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                ),
+                const Divider(),
+                const SizedBox(height: 20),
+                Consumer(builder: (context, ref, widget) {
+                  return ElevatedButton(onPressed: importCSV, child: Text(ref.watch(fileNameProvider)));
+                }),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: screenSize.width,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+                    child: const Text("Actualizar"),
+                    onPressed: () async {
+                      final files = ref.watch(fileProvider);
 
-                    if (formKey.currentState?.saveAndValidate() ?? false) {
-                      if (files != null) {
-                        Navigator.of(context).pop();
-                        ref.read(customerRepositoryProvider).updateByCSV(files).then((value) {
-                          if (value) {
-                            refresh();
+                      if (formKey.currentState?.saveAndValidate() ?? false) {
+                        if (files != null) {
+                          Navigator.of(context).pop();
+                          ref.read(customerRepositoryProvider).updateByCSV(files).then((value) {
+                            if (value) {
+                              refresh();
 
-                            ref.invalidate(fileNameProvider);
-                            ref.invalidate(fileProvider);
-                          }
-                        });
+                              ref.invalidate(fileNameProvider);
+                              ref.invalidate(fileProvider);
+                            }
+                          });
+                        }
                       }
-                    }
-                  },
+                    },
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: screenSize.width,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    ref.invalidate(fileNameProvider);
-                    ref.invalidate(fileProvider);
-                  },
-                  child: const Text("Cerrar"),
-                ),
-              )
-            ],
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: screenSize.width,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      ref.invalidate(fileNameProvider);
+                      ref.invalidate(fileProvider);
+                    },
+                    child: const Text("Cerrar"),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ));
@@ -126,65 +131,161 @@ class HomeView extends ConsumerWidget {
 
     void updateEmail() async {
       final screenSize = MediaQuery.of(context).size;
+      var shortestSide = screenSize.shortestSide;
+      final bool useMobileLayout = shortestSide < 600;
 
       context.showModal(SizedBox(
-        width: screenSize.width / 2,
+        width: useMobileLayout ? null : screenSize.width / 2,
         child: FormBuilder(
           key: formKey,
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: ListView(
+          child: Padding(
             padding: const EdgeInsets.all(20),
-            children: [
-              const Divider(),
-              const Center(
-                child: Text("Actualizar Correo", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              ),
-              const Divider(),
-              const SizedBox(height: 20),
-              FormBuilderTextField(
-                name: 'oldEmail',
-                decoration: const InputDecoration(label: Text("Correo a Actualizar")),
-                validator: FormBuilderValidators.required(),
-              ),
-              const SizedBox(height: 20),
-              FormBuilderTextField(
-                name: 'newEmail',
-                decoration: const InputDecoration(label: Text("Nuevo Correo")),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: screenSize.width,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
-                  child: const Text("Actualizar"),
-                  onPressed: () async {
-                    if (formKey.currentState?.saveAndValidate() ?? false) {
-                      final oldEmail = formKey.currentState?.value['oldEmail'] ?? '';
-                      final newEmail = formKey.currentState?.value['newEmail'] ?? '';
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Divider(),
+                const Center(
+                  child: Text("Actualizar Correo", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                ),
+                const Divider(),
+                const SizedBox(height: 20),
+                FormBuilderTextField(
+                  name: 'oldEmail',
+                  decoration: const InputDecoration(label: Text("Correo a Actualizar")),
+                  validator: FormBuilderValidators.required(),
+                ),
+                const SizedBox(height: 20),
+                FormBuilderTextField(
+                  name: 'newEmail',
+                  decoration: const InputDecoration(label: Text("Nuevo Correo")),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: screenSize.width,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+                    child: const Text("Actualizar"),
+                    onPressed: () async {
+                      if (formKey.currentState?.saveAndValidate() ?? false) {
+                        final oldEmail = formKey.currentState?.value['oldEmail'] ?? '';
+                        final newEmail = formKey.currentState?.value['newEmail'] ?? '';
 
-                      ref
-                          .read(customerRepositoryProvider)
-                          .updateEmail(oldEmail: oldEmail, newEmail: newEmail)
-                          .then((value) {
-                        if (value) {
-                          Navigator.of(context).pop();
+                        ref
+                            .read(customerRepositoryProvider)
+                            .updateEmail(oldEmail: oldEmail, newEmail: newEmail)
+                            .then((value) {
+                          if (value) {
+                            Navigator.of(context).pop();
 
+                            refresh();
+                          }
+                        });
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: screenSize.width,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text("Cerrar"),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ));
+    }
+
+    void updateCommentByName(List<CustomerEntity> customers) async {
+      final screenSize = MediaQuery.of(context).size;
+      var shortestSide = screenSize.shortestSide;
+      final bool useMobileLayout = shortestSide < 600;
+
+      context.showModal(SizedBox(
+        width: useMobileLayout ? null : screenSize.width / 2,
+        child: FormBuilder(
+          key: formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Divider(),
+                const Center(
+                  child: Text("Actualizar Contacto", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                ),
+                const Divider(),
+                const SizedBox(height: 20),
+                FormBuilderTextField(
+                  name: 'name',
+                  decoration: const InputDecoration(label: Text("Supervisor")),
+                  validator: FormBuilderValidators.required(),
+                ),
+                const SizedBox(height: 20),
+                FormBuilderTextField(
+                  name: 'contactOne',
+                  decoration: const InputDecoration(label: Text("Contacto 1")),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.required(),
+                    FormBuilderValidators.integer(),
+                    FormBuilderValidators.equalLength(10)
+                  ]),
+                ),
+                const SizedBox(height: 20),
+                FormBuilderTextField(
+                  name: 'contactTwo',
+                  decoration: const InputDecoration(label: Text("Contacto 2")),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.integer(),
+                    FormBuilderValidators.equalLength(10),
+                  ]),
+                ),
+                const SizedBox(height: 40),
+                SizedBox(
+                  width: screenSize.width,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+                    child: const Text("Actualizar"),
+                    onPressed: () async {
+                      if (formKey.currentState?.saveAndValidate() ?? false) {
+                        final name = formKey.currentState?.value['name'] ?? '';
+                        final contactOne = formKey.currentState?.value['contactOne'] ?? '';
+                        final contactTwo = formKey.currentState?.value['contactTwo'] ?? '';
+
+                        final contactsToUpdate = customers.where((element) {
+                          return element.comment.contains(name);
+                        });
+
+                        Navigator.of(context).pop();
+
+                        Future.wait(
+                          contactsToUpdate.map(
+                            (e) => ref
+                                .read(customerRepositoryProvider)
+                                .updateComment(id: e.id, name: name, contactOne: contactOne, contactTwo: contactTwo),
+                          ),
+                        ).then((_) {
                           refresh();
-                        }
-                      });
-                    }
-                  },
+                        });
+                      }
+                    },
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: screenSize.width,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text("Cerrar"),
-                ),
-              )
-            ],
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: screenSize.width,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text("Cerrar"),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ));
@@ -192,48 +293,78 @@ class HomeView extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.all(5),
-          child: TextFormField(
-            decoration: const InputDecoration(label: Text("Busqueda por ID")),
-            onChanged: (value) => ref.read(idCustomerForSearchProvider.notifier).update((_) => value),
+        title: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(5),
+            child: Image.asset(
+              "assets/logo_small.png",
+              height: 25,
+              fit: BoxFit.contain,
+            ),
           ),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(onPressed: updateCSV, child: const Text("Subir CSV")),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(onPressed: updateEmail, child: const Text("Actualizar Correo")),
-          ),
-        ],
       ),
       body: customerControllerAsync.when(
         data: (customers) {
           final customersFiltered = ref.watch(customersFilteredProvider(customers));
 
-          return SizedBox(
-            height: screenSize.height,
-            width: screenSize.width,
-            child: SelectionArea(
-              child: PaginatedDataTable(
-                columns: const [
-                  DataColumn(label: Text("ID")),
-                  DataColumn(label: Text("Titulo")),
-                  DataColumn(label: Text("Correo")),
-                  DataColumn(label: Text("Apellido")),
-                  DataColumn(label: Text("Comentario")),
-                  DataColumn(label: Text("Acciones")),
-                ],
-                source: CustomerDataSource(
-                  customers: customersFiltered,
-                  context: context,
-                  ref: ref,
-                  refresh: refresh,
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                ButtonBar(
+                  overflowButtonSpacing: 5,
+                  children: [
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                      onPressed: updateCSV,
+                      label: const Text("Subir CSV"),
+                      icon: const Icon(Icons.file_copy_rounded),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () => updateCommentByName(customers),
+                      label: const Text("Actualizar Contactos"),
+                      icon: const Icon(Icons.contact_page_rounded),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: updateEmail,
+                      label: const Text("Actualizar Correo"),
+                      icon: const Icon(Icons.attach_email_rounded),
+                    ),
+                  ],
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      label: Text("Busqueda por ID"),
+                      icon: Icon(Icons.search),
+                    ),
+                    onChanged: (value) => ref.read(idCustomerForSearchProvider.notifier).update((_) => value),
+                  ),
+                ),
+                SizedBox(
+                  height: screenSize.height,
+                  width: screenSize.width,
+                  child: SelectionArea(
+                    child: PaginatedDataTable(
+                      columns: const [
+                        DataColumn(label: Text("ID")),
+                        DataColumn(label: Text("Titulo")),
+                        DataColumn(label: Text("Correo")),
+                        DataColumn(label: Text("Apellido")),
+                        DataColumn(label: Text("Contacto")),
+                      ],
+                      source: CustomerDataSource(
+                        customers: customersFiltered,
+                        context: context,
+                        ref: ref,
+                        refresh: refresh,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           );
         },
@@ -265,79 +396,92 @@ class CustomerDataSource extends DataTableSource {
 
   void updateComment(String id) async {
     final screenSize = MediaQuery.of(context).size;
+    var shortestSide = screenSize.shortestSide;
+    final bool useMobileLayout = shortestSide < 600;
 
     context.showModal(SizedBox(
-      width: screenSize.width / 2,
+      width: useMobileLayout ? null : screenSize.width / 2,
       child: FormBuilder(
         key: formKey,
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        child: ListView(
+        child: Padding(
           padding: const EdgeInsets.all(20),
-          children: [
-            const Divider(),
-            const Center(
-              child: Text("Actualizar Comentario", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            ),
-            const Divider(),
-            const SizedBox(height: 20),
-            FormBuilderTextField(
-              name: 'id',
-              readOnly: true,
-              initialValue: id,
-              decoration: const InputDecoration(label: Text("ID")),
-            ),
-            const SizedBox(height: 20),
-            FormBuilderTextField(
-              name: 'name',
-              decoration: const InputDecoration(label: Text("Nombre Contacto")),
-              validator: FormBuilderValidators.required(),
-            ),
-            const SizedBox(height: 20),
-            FormBuilderTextField(
-              name: 'contactOne',
-              decoration: const InputDecoration(label: Text("Contacto 1")),
-              validator: FormBuilderValidators.required(),
-            ),
-            const SizedBox(height: 20),
-            FormBuilderTextField(
-              name: 'contactTwo',
-              decoration: const InputDecoration(label: Text("Contacto 2")),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: screenSize.width,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
-                child: const Text("Actualizar"),
-                onPressed: () async {
-                  if (formKey.currentState?.saveAndValidate() ?? false) {
-                    final name = formKey.currentState?.value['name'] ?? '';
-                    final contactOne = formKey.currentState?.value['contactOne'] ?? '';
-                    final contactTwo = formKey.currentState?.value['contactTwo'] ?? '';
-
-                    ref
-                        .read(customerRepositoryProvider)
-                        .updateComment(id: id, name: name, contactOne: contactOne, contactTwo: contactTwo)
-                        .then((value) {
-                      if (value) {
-                        Navigator.of(context).pop();
-
-                        refresh();
-                      }
-                    });
-                  }
-                },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Divider(),
+              const Center(
+                child: Text("Actualizar Contacto", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: screenSize.width,
-              child: ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text("Cerrar"),
+              const Divider(),
+              const SizedBox(height: 20),
+              FormBuilderTextField(
+                name: 'id',
+                readOnly: true,
+                initialValue: id,
+                decoration: const InputDecoration(label: Text("ID")),
               ),
-            )
-          ],
+              const SizedBox(height: 20),
+              FormBuilderTextField(
+                name: 'name',
+                decoration: const InputDecoration(label: Text("Supervisor")),
+                validator: FormBuilderValidators.required(),
+              ),
+              const SizedBox(height: 20),
+              FormBuilderTextField(
+                name: 'contactOne',
+                decoration: const InputDecoration(label: Text("Contacto 1")),
+                validator: FormBuilderValidators.compose([
+                  FormBuilderValidators.required(),
+                  FormBuilderValidators.integer(),
+                  FormBuilderValidators.equalLength(10)
+                ]),
+              ),
+              const SizedBox(height: 20),
+              FormBuilderTextField(
+                name: 'contactTwo',
+                decoration: const InputDecoration(label: Text("Contacto 2")),
+                validator: FormBuilderValidators.compose([
+                  FormBuilderValidators.integer(),
+                  FormBuilderValidators.equalLength(10),
+                ]),
+              ),
+              const SizedBox(height: 40),
+              SizedBox(
+                width: screenSize.width,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+                  child: const Text("Actualizar"),
+                  onPressed: () async {
+                    if (formKey.currentState?.saveAndValidate() ?? false) {
+                      final name = formKey.currentState?.value['name'] ?? '';
+                      final contactOne = formKey.currentState?.value['contactOne'] ?? '';
+                      final contactTwo = formKey.currentState?.value['contactTwo'] ?? '';
+
+                      ref
+                          .read(customerRepositoryProvider)
+                          .updateComment(id: id, name: name, contactOne: contactOne, contactTwo: contactTwo)
+                          .then((value) {
+                        if (value) {
+                          Navigator.of(context).pop();
+
+                          refresh();
+                        }
+                      });
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: screenSize.width,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text("Cerrar"),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     ));
@@ -348,12 +492,23 @@ class CustomerDataSource extends DataTableSource {
     final customer = customers.elementAt(index);
 
     return DataRow(cells: [
-      DataCell(Text(customer.id)),
+      DataCell(Row(
+        children: [
+          IconButton(
+            onPressed: () => updateComment(customer.id),
+            icon: const Icon(
+              Icons.contact_phone_rounded,
+              color: Colors.indigo,
+            ),
+          ),
+          const SizedBox(width: 5),
+          Text(customer.id),
+        ],
+      )),
       DataCell(Text(customer.title)),
       DataCell(Text(customer.email)),
       DataCell(Text(customer.lastname)),
       DataCell(Text(customer.comment)),
-      DataCell(IconButton(onPressed: () => updateComment(customer.id), icon: const Icon(Icons.comment))),
     ]);
   }
 

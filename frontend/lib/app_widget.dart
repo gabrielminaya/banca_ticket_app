@@ -10,7 +10,6 @@ class AppWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
-      darkTheme: ThemeData(colorSchemeSeed: Colors.blue, brightness: Brightness.dark),
       theme: ThemeData(colorSchemeSeed: Colors.blue),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
