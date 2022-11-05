@@ -7,6 +7,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:frontend/core/context_ext.dart';
+import 'package:frontend/module/controllers/auth_controller.dart';
 import 'package:frontend/module/controllers/customer_controller.dart';
 import 'package:frontend/module/entities/customer_entity.dart';
 import 'package:frontend/module/repositories/customer_repository.dart';
@@ -303,6 +304,12 @@ class HomeView extends ConsumerWidget {
             ),
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () => ref.read(authControllerProvider.notifier).signOut(),
+            icon: const Icon(Icons.logout),
+          )
+        ],
       ),
       body: customerControllerAsync.when(
         data: (customers) {

@@ -1954,6 +1954,7 @@ THE SOFTWARE.
 --------------------------------------------------------------------------------
 args
 csslib
+logging
 
 Copyright 2013, the Dart project authors. 
 
@@ -7047,6 +7048,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 --------------------------------------------------------------------------------
 flutter_lints
 flutter_plugin_android_lifecycle
+go_router
 plugin_platform_interface
 
 Copyright 2013 The Flutter Authors. All rights reserved.
