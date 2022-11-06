@@ -63,7 +63,7 @@ class SignInView extends ConsumerWidget {
                       const SizedBox(height: 10),
                       FormBuilderTextField(
                         name: "email",
-                        initialValue: "rtomas",
+                        // initialValue: "rtomas",
                         decoration: const InputDecoration(
                           label: Text("Usuario"),
                         ),
@@ -72,7 +72,7 @@ class SignInView extends ConsumerWidget {
                       const SizedBox(height: 10),
                       FormBuilderTextField(
                         name: "password",
-                        initialValue: "Masterpiece01*",
+                        // initialValue: "Masterpiece01*",
                         decoration: InputDecoration(
                           label: const Text("Contaseña"),
                           suffixIcon: IconButton(
