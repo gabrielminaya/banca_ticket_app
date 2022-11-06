@@ -3,9 +3,10 @@ import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../entities/profile_entity.dart';
+import '../repositories/customer_repository.dart';
 
 final authControllerProvider = StateNotifierProvider<AuthController, AuthState>((ref) {
-  return AuthController();
+  return AuthController(ref.read(customerRepositoryProvider));
 });
 
 abstract class AuthState {
@@ -27,7 +28,8 @@ class Unauthenticated extends AuthState {
 }
 
 class AuthController extends StateNotifier<AuthState> {
-  AuthController() : super(const Unauthenticated());
+  final CustomerRepository _repository;
+  AuthController(this._repository) : super(const Unauthenticated());
 
   bool isAuthenticated() => state is Authenticated;
 
@@ -35,14 +37,14 @@ class AuthController extends StateNotifier<AuthState> {
     try {
       state = AuthLoading();
 
-      // if (result.user == null) {
-      //   state = const Unauthenticated(message: "Usuario o contraseña inválidos.");
-      //   return;
-      // }
+      final profile = await _repository.signIn(username: email, password: password);
 
-      state = Authenticated(
-        ProfileEntity(),
-      );
+      if (profile == null) {
+        state = const Unauthenticated(message: "Usuario o contraseña inválidos.");
+        return;
+      }
+
+      state = Authenticated(profile);
     } catch (e) {
       log(e.toString());
       state = const Unauthenticated(message: "Usuario o contraseña inválidos.");

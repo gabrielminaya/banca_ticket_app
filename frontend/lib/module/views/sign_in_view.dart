@@ -63,19 +63,16 @@ class SignInView extends ConsumerWidget {
                       const SizedBox(height: 10),
                       FormBuilderTextField(
                         name: "email",
-                        initialValue: "admin@admin.com",
+                        initialValue: "rtomas",
                         decoration: const InputDecoration(
-                          label: Text("Correo electrónico"),
+                          label: Text("Usuario"),
                         ),
-                        validator: FormBuilderValidators.compose([
-                          FormBuilderValidators.required(),
-                          FormBuilderValidators.email(),
-                        ]),
+                        validator: FormBuilderValidators.required(),
                       ),
                       const SizedBox(height: 10),
                       FormBuilderTextField(
                         name: "password",
-                        initialValue: "vCOMPANY2012##admin",
+                        initialValue: "Masterpiece01*",
                         decoration: InputDecoration(
                           label: const Text("Contaseña"),
                           suffixIcon: IconButton(

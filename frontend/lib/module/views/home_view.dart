@@ -41,6 +41,7 @@ class HomeView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(authControllerProvider) as Authenticated;
     final customerControllerAsync = ref.watch(customerControllerProvider);
     final screenSize = MediaQuery.of(context).size;
 
@@ -201,7 +202,7 @@ class HomeView extends ConsumerWidget {
       ));
     }
 
-    void updateCommentByName(List<CustomerEntity> customers) async {
+    void updateNameByName(List<CustomerEntity> customers) async {
       final screenSize = MediaQuery.of(context).size;
       var shortestSide = screenSize.shortestSide;
       final bool useMobileLayout = shortestSide < 600;
@@ -218,33 +219,20 @@ class HomeView extends ConsumerWidget {
               children: [
                 const Divider(),
                 const Center(
-                  child: Text("Actualizar Contacto", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  child: Text("Actualizar Supervisor", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ),
                 const Divider(),
                 const SizedBox(height: 20),
                 FormBuilderTextField(
-                  name: 'name',
-                  decoration: const InputDecoration(label: Text("Supervisor")),
+                  name: 'oldName',
+                  decoration: const InputDecoration(label: Text("Supervisor a actualizar")),
                   validator: FormBuilderValidators.required(),
                 ),
                 const SizedBox(height: 20),
                 FormBuilderTextField(
-                  name: 'contactOne',
-                  decoration: const InputDecoration(label: Text("Contacto 1")),
-                  validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.required(),
-                    FormBuilderValidators.integer(),
-                    FormBuilderValidators.equalLength(10)
-                  ]),
-                ),
-                const SizedBox(height: 20),
-                FormBuilderTextField(
-                  name: 'contactTwo',
-                  decoration: const InputDecoration(label: Text("Contacto 2")),
-                  validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.integer(),
-                    FormBuilderValidators.equalLength(10),
-                  ]),
+                  name: 'newName',
+                  decoration: const InputDecoration(label: Text("Nuevo supervisor")),
+                  validator: FormBuilderValidators.required(),
                 ),
                 const SizedBox(height: 40),
                 SizedBox(
@@ -254,21 +242,27 @@ class HomeView extends ConsumerWidget {
                     child: const Text("Actualizar"),
                     onPressed: () async {
                       if (formKey.currentState?.saveAndValidate() ?? false) {
-                        final name = formKey.currentState?.value['name'] ?? '';
-                        final contactOne = formKey.currentState?.value['contactOne'] ?? '';
-                        final contactTwo = formKey.currentState?.value['contactTwo'] ?? '';
+                        final oldName = formKey.currentState?.value['oldName'] ?? '';
+                        final newName = formKey.currentState?.value['newName'] ?? '';
 
                         final contactsToUpdate = customers.where((element) {
-                          return element.comment.contains(name);
+                          return element.comment.contains(oldName);
                         });
 
                         Navigator.of(context).pop();
 
                         Future.wait(
                           contactsToUpdate.map(
-                            (e) => ref
-                                .read(customerRepositoryProvider)
-                                .updateComment(id: e.id, name: name, contactOne: contactOne, contactTwo: contactTwo),
+                            (e) {
+                              final contacts = e.comment.split("/");
+
+                              return ref.read(customerRepositoryProvider).updateComment(
+                                    id: e.id,
+                                    name: newName,
+                                    contactOne: contacts[0],
+                                    contactTwo: contacts[1],
+                                  );
+                            },
                           ),
                         ).then((_) {
                           refresh();
@@ -322,22 +316,24 @@ class HomeView extends ConsumerWidget {
                 ButtonBar(
                   overflowButtonSpacing: 5,
                   children: [
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                      onPressed: updateCSV,
-                      label: const Text("Subir CSV"),
-                      icon: const Icon(Icons.file_copy_rounded),
-                    ),
-                    ElevatedButton.icon(
-                      onPressed: () => updateCommentByName(customers),
-                      label: const Text("Actualizar Contactos"),
-                      icon: const Icon(Icons.contact_page_rounded),
-                    ),
-                    ElevatedButton.icon(
-                      onPressed: updateEmail,
-                      label: const Text("Actualizar Correo"),
-                      icon: const Icon(Icons.attach_email_rounded),
-                    ),
+                    if (profile.entity.canDoActions) ...[
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                        onPressed: updateCSV,
+                        label: const Text("Subir CSV"),
+                        icon: const Icon(Icons.file_copy_rounded),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () => updateNameByName(customers),
+                        label: const Text("Actualizar Supervisor"),
+                        icon: const Icon(Icons.contact_page_rounded),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: updateEmail,
+                        label: const Text("Actualizar Correo"),
+                        icon: const Icon(Icons.attach_email_rounded),
+                      ),
+                    ]
                   ],
                 ),
                 Padding(
@@ -499,19 +495,25 @@ class CustomerDataSource extends DataTableSource {
     final customer = customers.elementAt(index);
 
     return DataRow(cells: [
-      DataCell(Row(
-        children: [
-          IconButton(
-            onPressed: () => updateComment(customer.id),
-            icon: const Icon(
-              Icons.contact_phone_rounded,
-              color: Colors.indigo,
-            ),
-          ),
-          const SizedBox(width: 5),
-          Text(customer.id),
-        ],
-      )),
+      DataCell(Consumer(builder: (context, ref, _) {
+        final profile = ref.watch(authControllerProvider) as Authenticated;
+
+        return Row(
+          children: [
+            if (profile.entity.canDoActions || profile.entity.canContactUpdate) ...[
+              IconButton(
+                onPressed: () => updateComment(customer.id),
+                icon: const Icon(
+                  Icons.contact_phone_rounded,
+                  color: Colors.indigo,
+                ),
+              ),
+              const SizedBox(width: 5),
+            ],
+            Text(customer.id),
+          ],
+        );
+      })),
       DataCell(Text(customer.title)),
       DataCell(Text(customer.email)),
       DataCell(Text(customer.lastname)),

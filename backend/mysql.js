@@ -31,3 +31,10 @@ export default initializeConnection({
     password: 'Ad123456',
     database: 'otrsbancas'
 });
+
+// export default initializeConnection({
+//     host: 'localhost',
+//     user: 'root',
+//     password: '123456',
+//     database: 'otrs'
+// });

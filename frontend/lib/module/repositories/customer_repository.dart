@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/module/entities/profile_entity.dart';
 import 'package:http/http.dart' as http;
 
 import '../../core/http_client.dart';
@@ -16,8 +18,36 @@ class CustomerRepository {
 
   const CustomerRepository(this._client);
 
-  String get host => "172.16.220.50";
+  String get host => "172.16.220.29";
   String get port => "3001";
+
+  Future<ProfileEntity?> signIn({required String username, required String password}) async {
+    try {
+      final passwordEncode = sha256.convert(utf8.encode(password));
+
+      final response = await _client.post(
+        Uri.parse("http://$host:$port/user"),
+        headers: {"Access-Control-Allow-Origin": "*", 'Content-Type': 'application/json', 'Accept': '*/*'},
+        body: jsonEncode({
+          "username": username,
+          "password": "$passwordEncode",
+        }),
+      );
+
+      final result = jsonDecode(response.body)["result"];
+
+      final profiles = <ProfileEntity>[];
+
+      for (var element in result) {
+        profiles.add(ProfileEntity.fromMap(element));
+      }
+
+      return profiles.first;
+    } catch (e) {
+      log(e.toString());
+      return null;
+    }
+  }
 
   Future<List<CustomerEntity>> getAllCustomers() async {
     try {

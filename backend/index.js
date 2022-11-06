@@ -12,6 +12,40 @@ app.use(express.json());
 const PORT = 3001;
 const HOST = '0.0.0.0';
 
+app.post("/user", (req, res) => {
+
+    try {
+        const { username, password } = req.body;
+        const query = `
+            SELECT users.*, (
+                SELECT roles.name FROM role_user
+                inner join roles on roles.id = role_id
+                where user_id = users.id limit 1
+            ) as role_id FROM otrs.users
+            where valid_id = 1 and login= '${username}' and pw='${password}';
+        `;
+
+        console.log(query);
+
+        connection.query(query, function (error, results, fields) {
+            if (error) throw error;
+
+            return res.json({
+                "ok": true,
+                "error": null,
+                "result": results,
+            });
+        });
+
+
+    } catch (error) {
+        return res.json({
+            "ok": false,
+            "error": error,
+        });
+    }
+});
+
 app.get("/users", (_, res) => {
 
     try {

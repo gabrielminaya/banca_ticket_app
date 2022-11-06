@@ -6,9 +6,12 @@ services:
       dockerfile: dockerfile
     ports:
       - "3001:3001"
+    restart: always
+
   frontend:
     build:
       context: ./frontend
       dockerfile: dockerfile
     ports:
       - "3002:80"
+    restart: always
