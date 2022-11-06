@@ -21,7 +21,7 @@ app.post("/user", (req, res) => {
                 SELECT roles.name FROM role_user
                 inner join roles on roles.id = role_id
                 where user_id = users.id limit 1
-            ) as role_id FROM otrs.users
+            ) as role_id FROM users
             where valid_id = 1 and login= '${username}' and pw='${password}';
         `;
 
