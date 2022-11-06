@@ -83,10 +83,7 @@ class SignInView extends ConsumerWidget {
                           ),
                         ),
                         obscureText: isOscureText,
-                        validator: FormBuilderValidators.compose([
-                          FormBuilderValidators.required(),
-                          FormBuilderValidators.minLength(8),
-                        ]),
+                        validator: FormBuilderValidators.required(),
                       ),
                       const SizedBox(height: 40),
                       Consumer(builder: (context, ref, _) {

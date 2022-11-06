@@ -18,7 +18,7 @@ class CustomerRepository {
 
   const CustomerRepository(this._client);
 
-  String get host => "172.16.220.29";
+  String get host => "172.16.220.50";
   String get port => "3001";
 
   Future<ProfileEntity?> signIn({required String username, required String password}) async {
