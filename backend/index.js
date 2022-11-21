@@ -142,6 +142,49 @@ app.post("/updateLastname", (req, res) => {
     }
 });
 
+app.get("/customers", (_, res) => {
+
+    try {
+        connection.query(`SELECT * FROM customer_user;`, function (error, results, fields) {
+            if (error) throw error;
+
+            return res.json({
+                "ok": true,
+                "error": null,
+                "result": results,
+            });
+        });
+
+
+    } catch (error) {
+        return res.json({
+            "ok": false,
+            "error": error,
+        });
+    }
+});
+
+app.get("/queues", (_, res) => {
+
+    try {
+        connection.query(`SELECT * FROM queue;`, function (error, results, fields) {
+            if (error) throw error;
+
+            return res.json({
+                "ok": true,
+                "error": null,
+                "result": results,
+            });
+        });
+
+
+    } catch (error) {
+        return res.json({
+            "ok": false,
+            "error": error,
+        });
+    }
+});
 
 app.post("/ticket", async (req, res) => {
 
@@ -171,7 +214,7 @@ app.post("/ticket", async (req, res) => {
             d.getHours() + d.getMinutes() + d.getSeconds() + 'BOT';
 
         const query01 = `
-            INSERT INTO otrsbancas.ticket(
+            INSERT INTO ticket(
                 id,
                 tn,
                 title,
@@ -231,7 +274,7 @@ app.post("/ticket", async (req, res) => {
         `;
 
         const query02 = `
-            INSERT INTO otrsbancas.article (
+            INSERT INTO article (
                 id,
                 ticket_id,
                 article_type_id,
@@ -307,6 +350,7 @@ app.post("/ticket", async (req, res) => {
 
                         return res.json({
                             "ok": true,
+                            "ticket": `Ticket#${ticketId}`,
                             "error": null,
                         });
                     });
