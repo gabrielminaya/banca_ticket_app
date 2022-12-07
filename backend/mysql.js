@@ -27,8 +27,8 @@ function initializeConnection(config) {
 
 export default initializeConnection({
     host: '172.16.220.28',
-    user: 'remote',
-    password: '@rsic@r0102',
+    user: 'bot',
+    password: 'Ad123456',
     database: 'otrsbancas'
 });
 
