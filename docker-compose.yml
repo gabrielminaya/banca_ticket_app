@@ -7,6 +7,11 @@ services:
     ports:
       - "3001:3001"
     restart: always
+    healthcheck:
+      test: curl --fail -s http://localhost:3001/ || exit 1
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
 
   frontend:
     build:
@@ -15,3 +20,5 @@ services:
     ports:
       - "3002:80"
     restart: always
+    depends_on:
+      - backend

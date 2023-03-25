@@ -25,6 +25,11 @@ class CustomerRepository {
     try {
       final passwordEncode = sha256.convert(utf8.encode(password));
 
+      log(jsonEncode({
+        "username": username,
+        "password": "$passwordEncode",
+      }));
+
       final response = await _client.post(
         Uri.parse("http://$host:$port/user"),
         headers: {"Access-Control-Allow-Origin": "*", 'Content-Type': 'application/json', 'Accept': '*/*'},
