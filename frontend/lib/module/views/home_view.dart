@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:frontend/core/context_ext.dart';
 import 'package:frontend/module/controllers/auth_controller.dart';
@@ -291,8 +292,8 @@ class HomeView extends ConsumerWidget {
         title: Card(
           child: Padding(
             padding: const EdgeInsets.all(5),
-            child: Image.asset(
-              "assets/logo_small.png",
+            child: SvgPicture.asset(
+              "assets/logo.svg",
               height: 25,
               fit: BoxFit.contain,
             ),

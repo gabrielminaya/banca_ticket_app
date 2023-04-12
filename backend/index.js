@@ -211,7 +211,7 @@ app.post("/ticket", async (req, res) => {
             d.getHours() + ":" + d.getMinutes();
 
         let ticketId = d.getFullYear().toString() + (d.getMonth() + 1) + d.getDay() +
-            d.getHours() + d.getMinutes() + d.getSeconds() + 'BOT';
+            d.getHours() + d.getMinutes() + d.getSeconds() + d.getMilliseconds() + 'BOT';
 
         const query01 = `
             INSERT INTO ticket(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
 import '../controllers/auth_controller.dart';
@@ -41,82 +42,92 @@ class SignInView extends ConsumerWidget {
     });
 
     return Scaffold(
-      body: Center(
-        child: OutlinedButton(
-          onPressed: null,
-          child: SizedBox(
-            height: screenSize.height / 1.5,
-            width: screenSize.width / 3,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Center(
-                child: FormBuilder(
-                  key: formKey,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.asset(
-                        "assets/logo.png",
-                        height: 100,
-                      ),
-                      const SizedBox(height: 10),
-                      FormBuilderTextField(
-                        name: "email",
-                        // initialValue: "rtomas",
-                        decoration: const InputDecoration(
-                          label: Text("Usuario"),
-                        ),
-                        validator: FormBuilderValidators.required(),
-                      ),
-                      const SizedBox(height: 10),
-                      FormBuilderTextField(
-                        name: "password",
-                        // initialValue: "Masterpiece01*",
-                        decoration: InputDecoration(
-                          label: const Text("Contaseña"),
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              ref.read(isOscureTextProvider.notifier).update((state) => !isOscureText);
-                            },
-                            icon: !isOscureText ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off),
-                          ),
-                        ),
-                        obscureText: isOscureText,
-                        validator: FormBuilderValidators.required(),
-                      ),
-                      const SizedBox(height: 40),
-                      Consumer(builder: (context, ref, _) {
-                        final authState = ref.watch(authControllerProvider);
+      body: LayoutBuilder(builder: (context, constraints) {
+        double loginWidth = constraints.maxWidth;
 
-                        if (authState is AuthLoading) {
+        if (constraints.maxWidth > 600) {
+          loginWidth = constraints.maxWidth - (constraints.maxWidth / 1.5);
+        } else {
+          loginWidth = constraints.maxWidth - (constraints.maxWidth / 4);
+        }
+
+        return Center(
+          child: OutlinedButton(
+            onPressed: null,
+            child: SizedBox(
+              height: screenSize.height / 1.5,
+              width: loginWidth,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: FormBuilder(
+                    key: formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SvgPicture.asset(
+                          "assets/logo.svg",
+                          height: 100,
+                        ),
+                        const SizedBox(height: 10),
+                        FormBuilderTextField(
+                          name: "email",
+                          // initialValue: "rtomas",
+                          decoration: const InputDecoration(
+                            label: Text("Usuario"),
+                          ),
+                          validator: FormBuilderValidators.required(),
+                        ),
+                        const SizedBox(height: 10),
+                        FormBuilderTextField(
+                          name: "password",
+                          // initialValue: "Masterpiece01*",
+                          decoration: InputDecoration(
+                            label: const Text("Contaseña"),
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                ref.read(isOscureTextProvider.notifier).update((state) => !isOscureText);
+                              },
+                              icon: !isOscureText ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off),
+                            ),
+                          ),
+                          obscureText: isOscureText,
+                          validator: FormBuilderValidators.required(),
+                        ),
+                        const SizedBox(height: 40),
+                        Consumer(builder: (context, ref, _) {
+                          final authState = ref.watch(authControllerProvider);
+
+                          if (authState is AuthLoading) {
+                            return SizedBox(
+                              height: 40,
+                              width: screenSize.width,
+                              child: const ElevatedButton(
+                                onPressed: null,
+                                child: LinearProgressIndicator(),
+                              ),
+                            );
+                          }
+
                           return SizedBox(
                             height: 40,
                             width: screenSize.width,
-                            child: const ElevatedButton(
-                              onPressed: null,
-                              child: LinearProgressIndicator(),
+                            child: ElevatedButton(
+                              onPressed: signIn,
+                              child: const Text("Iniciar Sesión"),
                             ),
                           );
-                        }
-
-                        return SizedBox(
-                          height: 40,
-                          width: screenSize.width,
-                          child: ElevatedButton(
-                            onPressed: signIn,
-                            child: const Text("Iniciar Sesión"),
-                          ),
-                        );
-                      }),
-                    ],
+                        }),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }
